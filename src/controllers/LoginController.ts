@@ -1,6 +1,5 @@
-import {NextFunction, Request, Response, Router} from 'express'
-import {get} from './decorators/routes'
-import {controller} from './decorators/controller'
+import { NextFunction, Request, Response, Router } from 'express'
+import { get, post, controller, use, bodyValidator } from './decorators'
 
 @controller('/auth')
 class LoginController {
@@ -21,44 +20,22 @@ class LoginController {
         `)
     }
 
+    @post('/login')
+    @bodyValidator('email', 'password')
+    login(req: Request, res: Response) {
+        const { email, password } = req.body
 
-// getHome()
-// router.get('/', (req: Request, res: Response) => {
-//     if (req.session && req.session.loggedIn) {
-//         res.send(`
-//             <div>
-//                 <h1>You are logged in.</h1>
-//                 <a href="/logout">Log out</a>
-//             </div>
-//         `)
-//     } else {
-//         res.send(`
-//             <div>
-//                 <h1>You are not logged in.</h1>
-//                 <a href="/login">Log In</a>
-//             </div>
-//         `)
-//     }
-// })
+        if (email && password && email === 'hi@gmail.com' && password === 'password') {
+            req.session = { loggedIn: true }
+            res.redirect('/')
+        } else {
+            res.send('You must provide valid email/password')
+        }
+    }
 
-
-// router.post('/login', (req: RequestWithBody, res: Response) => {
-//     const { email, password } = req.body
-//
-//     if (email && password && email === 'hi@gmail.com' && password === 'password') {
-//         req.session = { loggedIn: true }
-//         res.redirect('/')
-//     }
-//     return res.send('You must provide email')
-// })
-//
-// router.get('/logout', (req: Request, res: Response) => {
-//     req.session = undefined
-//     res.redirect('/')
-// })
-//
-// router.get('/protected', protectedFn, (req: Request, res: Response) => {
-//     res.send(`Protected`)
-// })
-
+    @get('/logout')
+    logout(req: Request, res: Response) {
+        req.session = undefined
+        res.redirect('/')
+    }
 }
